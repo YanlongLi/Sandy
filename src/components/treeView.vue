@@ -20,14 +20,122 @@ controlStore = require "../utils/ControlStore.coffee"
 
 module.exports=
 	data:()->
+		size = controlStore.getSize()
+		[width,height] = [size.width,size.height]
+		[diameter,duration] = [width,2000]
+		#
+		tree = d3.layout.tree().size([height, width - 160])
+		cluster = d3.layout.cluster().size([height, width - 160])
+		radialTree = d3.layout.tree().size([360, diameter / 2 ])
+			.separation((a, b)-> if a.parent == b.parent then 1/a.depth else 2/a.depth)
+		radialCluster = d3.layout.cluster().size([360, diameter / 2 ])
+			.separation((a, b)-> if a.parent == b.parent then 1/a.depth else 2/a.depth)
+		#
+		diagonal = d3.svg.diagonal().projection((d)->[d.y-diameter/2, d.x-diameter/2])
+		radialDiagonal = d3.svg.diagonal.radial()
+			.projection((d)->[d.y, d.x / 180 * Math.PI])
+		#
 		root:{}
+		width: width
+		height: height
+		diameter: diameter
+		duration: duration
+		tree: tree
+		cluster: cluster
+		radialTree: radialTree
+		radialCluster: radialCluster
+		diagonal:diagonal
+		radialDiagonal: radialDiagonal
+		layout: "tree" # "cluster","radialTree","radialCluster"
 	asyncData: (resolve, reject)->
 		@$http.get "/data/flare.json", (root)->
 			resolve root:root
-			@drawTree()
+			@initEle()
+			that = @
+			setInterval ()->
+				names = ["tree","cluster","radialTree","radialCluster"]
+				index = Math.round(Math.random()*3)
+				console.log "change layout",index,names[index]
+				that.layout = names[index]
+			,3000
 		return
+	watch:
+		layout: (lname)->
+			switch lname
+				when "tree"
+					@drawTree()
+				when "cluster"
+					@drawTreeCluster()
+				when "radialTree"
+					@drawRadial()
+				when "radialCluster"
+					@drawRadialCluster()
+				else
+					console.error "illegal layout name",lname
+	events:
+		event_tree_change_layout: (layoutName)->
+			@layout = layoutName
 	methods:
+		initEle: ()->
+			i = 0
+			root = @root
+			layout = @tree
+			radius = @diameter/2
+			transform = (d)->"translate("+(d.y-radius)+","+(d.x-radius)+")"
+			# transform = (d)->"translate("+d.y+","+d.x+")"
+			diagonal = @diagonal
+			nodes = layout.nodes root
+			links = layout.links nodes
+			scale = d3.scale.linear().domain(d3.extent(nodes,(d)->d.size)).range([3,10])
+			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
+				.data(nodes,(d)->d.id || d.id=++i).enter().append("g").attr("class","node")
+				.attr("transform",transform)
+			node.insert("circle","g").style("stroke","#e41a1c").attr("r",(d)->scale(d.size) or 4)
+			link = d3.select(@$el).select("g.link-group").selectAll("path.link")
+				.data(links, (d)->d.target.id).enter().append("path").attr("class","link")
+				.attr("d",diagonal).style("fill","none").style("stroke","red")
 		drawTree: ()->
+			root = @root
+			layout = @tree
+			duration = @duration
+			radius = @diameter/2
+			transform = (d)->"translate("+(d.y-radius)+","+(d.x-radius)+")"
+			diagonal = @diagonal
+			@update(root,layout,duration,transform,diagonal)
+			return
+		drawTreeCluster: ()->
+			root = @root
+			layout = @cluster
+			duration = @duration
+			radius = @diameter/2
+			transform = (d)->"translate("+(d.y-radius)+","+(d.x-radius)+")"
+			diagonal = @diagonal
+			@update(root,layout,duration,transform,diagonal)
+			return
+		drawRadial: ()->
+			root = @root
+			layout = @radialTree
+			duration = @duration
+			transform = (d)->"rotate("+(d.x-90)+")translate("+(d.y)+")"
+			diagonal = @radialDiagonal
+			@update(root,layout,duration,transform,diagonal)
+			return
+		drawRadialCluster: ()->
+			root = @root
+			layout = @radialCluster
+			duration = @duration
+			transform = (d)->"rotate("+(d.x-90)+")translate("+(d.y)+")"
+			diagonal = @radialDiagonal
+			@update(root,layout,duration,transform,diagonal)
+			return
+		update: (root,layout,duration,transform,diagonal)->
+			nodes = layout.nodes root
+			links = layout.links nodes
+			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
+			node.data(nodes,(d)->d.id).transition(duration).attr("transform",transform)
+			link = d3.select(@$el).select("g.link-group").selectAll("path.link")
+			link.data(links,(d)->d.target.id).transition(duration).attr("d",diagonal)
+		temp: ()->
 			size = controlStore.getSize()
 			width = size.width
 			height = size.height
@@ -59,18 +167,6 @@ module.exports=
 				.data(links, (d)->d.target.id)
 			link.enter().insert("path","g").attr("class","link")
 				.attr("d",diagonal).style("fill","none")
-	compiled: ()->
-		size = controlStore.getSize()
-		width = size.width * 5
-		height = size.height * 5
-		step = 40
-		grid = d3.select(@$el).select(".grid")
-		grid.append("g").selectAll("line").data(d3.range(-width,width,step)).enter()
-			.append("line").attr("x1", (d)->d).attr("y1",-height)
-			.attr("x2", (d)->d).attr("y2",height)
-		grid.append("g").selectAll("line").data(d3.range(-height,height,step)).enter()
-			.append("line").attr("y1", (d)->d).attr("x1",-width)
-			.attr("y2", (d)->d).attr("x2",width)
 		
 </script>
 
