@@ -11,7 +11,7 @@
 $ = require "jquery"
 d3 = require "d3"
 
-control = require "../utils/ControlStore.coffee"
+control = require "../../utils/ControlStore.coffee"
 
 module.exports =
 	data:()->

@@ -13,10 +13,12 @@
 
 <script lang="coffee">
 
+# http://jsfiddle.net/VividD/3TkJj/
+
 $ = require "jquery"
 d3 = require "d3"
 
-controlStore = require "../utils/ControlStore.coffee"
+controlStore = require "../../utils/ControlStore.coffee"
 
 module.exports=
 	data:()->
@@ -51,13 +53,13 @@ module.exports=
 		@$http.get "/data/flare.json", (root)->
 			resolve root:root
 			@initEle()
-			that = @
-			setInterval ()->
-				names = ["tree","cluster","radialTree","radialCluster"]
-				index = Math.round(Math.random()*3)
-				console.log "change layout",index,names[index]
-				that.layout = names[index]
-			,3000
+			# that = @
+			# setInterval ()->
+			# 	names = ["tree","cluster","radialTree","radialCluster"]
+			# 	index = Math.round(Math.random()*3)
+			# 	console.log "change layout",index,names[index]
+			# 	that.layout = names[index]
+			# ,3000
 		return
 	watch:
 		layout: (lname)->

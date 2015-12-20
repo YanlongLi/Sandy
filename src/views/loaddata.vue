@@ -22,7 +22,6 @@ Big modal
 <script lang="coffee">
 
 modal = require("vue-strap").modal
-console.log modal
 
 module.exports =
 	components:

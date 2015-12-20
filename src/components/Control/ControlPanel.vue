@@ -30,7 +30,7 @@
 <script lang="coffee">
 
 attrSelect = require "./attrSelect.vue"
-controlStore = require "../utils/ControlStore.coffee"
+controlStore = require "../../utils/ControlStore.coffee"
 
 module.exports =
 	components:

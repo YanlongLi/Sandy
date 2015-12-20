@@ -25,7 +25,7 @@
 
 <script lang="coffee">
 
-dataTable = require "../components/DataTable.vue"
+dataTable = require "../components/Edit/DataTable.vue"
 
 module.exports=
 	components:

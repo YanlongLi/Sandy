@@ -34,13 +34,13 @@
 d3 = require "d3"
 $ = require "jquery"
 
-treeview = require "../components/treeView.vue"
-treemapview = require "../components/treemapView.vue"
-icicleview = require "../components/icicleView.vue"
-indentview = require "../components/indentView.vue"
+treeview = require "../components/TreeView/TreeView.vue"
+treemapview = require "../components/TreemapView/TreemapView.vue"
+icicleview = require "../components/IcicleView/IcicleView.vue"
+indentview = require "../components/IndentView/IndentView.vue"
 
-control = require "../components/controlPanel.vue"
-attribute = require "../components/attributePanel.vue"
+control = require "../components/Control/ControlPanel.vue"
+attribute = require "../components/Attribute/AttributePanel.vue"
 
 module.exports=
 	components:

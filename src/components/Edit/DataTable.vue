@@ -6,7 +6,7 @@
 
 <script lang="coffee">
 
-dataStore = require "../utils/DataStore.coffee"
+dataStore = require "../../utils/DataStore.coffee"
 
 module.exports=
 	data: ()->
