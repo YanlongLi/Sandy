@@ -1,27 +1,26 @@
 <template>
 <div class="wrapper">
 	<div class="toolbar">
-		<span :class="{'btn-primary-outline':!dragSet, 'btn-primary':dragSet}" @click="toggleDrag"><i class="fa fa-arrows"></i></span>
-		<span>Scale: {{Math.floor(trans.scale*100)}}</span>
+		<toolbar :trans="trans"></toolbar>
 	</div>
 	<div class="panel-wrapper">
 		<div class="panel">
 			<div class="panel-header">Control Panel</div>
 			<div class="panel-body">
-				<control-panel @event_change_view="onViewChange"></control-panel>
+				<control-panel></control-panel>
 			</div>
 		</div>
 		<div class="panel">
 			<div class="panel-header">Attribute Panel</div>
 			<div class="panel-body">
-				<attribute-panel :cur-node="curNode"></attribute-panel>
+				<attribute-panel></attribute-panel>
 			</div>
 		</div>
 	</div>
-	<div class="view-wrapper" @mouseup="divMouseUp" @mousedown="divMouseDown" @mousemove="divMouseMove" @wheel="divMouseWheel">
+	<div class="view-wrapper" v-el:svg-wrapper>
 		<svg width="100%" height="100%">
 			<g class="view" :transform="transform">
-				<component :is="curView" @event_node_select="onNodeSelect" keep-alive ></component>
+				<component :is="curView" keep-alive ></component>
 			</g>
 		</svg>
 	</div>
@@ -41,6 +40,7 @@ indentview = require "../components/IndentView/IndentView.vue"
 
 control = require "../components/Control/ControlPanel.vue"
 attribute = require "../components/Attribute/AttributePanel.vue"
+toolbar = require "../components/toolbar.vue"
 
 module.exports=
 	components:
@@ -50,48 +50,60 @@ module.exports=
 		indentView: indentview
 		controlPanel: control
 		attributePanel: attribute
+		toolbar: toolbar
 	data: ()->
-		dragSet: false
-		scaleSet: false
-		isMouseDown: false
 		trans:
 			dx:20
 			dy:20
 			scale:0.8
-		curNode:
-			name: "no name"
-			depth: "no depth"
 		curView: "treeView"
-	methods:
-		onViewChange: (viewName)->
-			@curView = viewName
-		onNodeSelect: (node)->
-			@$set "curNode",node
-		toggleDrag: ()->
-			@dragSet=!@dragSet
-			@$broadcast "event_drag_set",@dragSet
-		resetPos: ()->
+	events:
+		event_set_drag: (dragSet)->
+			@$broadcast "event_drag_set",dragSet
+			@onSetDrag(dragSet)
+		event_reset_position: ()->
 			@trans.scale = 0.8
 			@trans.dx = 20
 			@trans.dy = 20
-		divMouseWheel: (event)->
+		event_select_node: (node)->
+			@$broadcast "event_select_node",node
+		event_change_view: (viewName)->
+			@onChangeView(viewName)
+	methods:
+		onChangeView: (viewName)->
+			@curView = viewName
+		onSetDrag: ()->
+			false
+	ready: ()->
+		isMouseDown = false
+		trans = @trans
+		divMouseWheel= (event)->
 			getD = (dx,os,ns,xoff)-> (xoff*(os-ns)+dx*ns)/os
-			return if !@dragSet
-			oS = @trans.scale
-			nS = oS + (event.wheelDelta / 1200.0)
-			@trans.dx = getD @trans.dx,oS,nS,event.offsetX
-			@trans.dy = getD @trans.dy,oS,nS,event.offsetY
-			@trans.scale = nS
-		divMouseDown: ()->
-			return if !@dragSet
-			@isMouseDown = true
-		divMouseUp: ()->
-			return if !@dragSet
-			@isMouseDown = false
-		divMouseMove: (event)->
-			return if !@dragSet or !@isMouseDown
-			@trans.dx += event.movementX
-			@trans.dy += event.movementY
+			oS = trans.scale
+			nS = oS + (event.originalEvent.wheelDelta / 1200.0)
+			trans.dx = getD trans.dx,oS,nS,event.originalEvent.offsetX
+			trans.dy = getD trans.dy,oS,nS,event.originalEvent.offsetY
+			trans.scale = nS
+		divMouseDown= ()->
+			isMouseDown = true
+		divMouseUp= ()->
+			isMouseDown = false
+		divMouseMove= (event)->
+			return if !isMouseDown
+			trans.dx += event.originalEvent.movementX
+			trans.dy += event.originalEvent.movementY
+		el = @$els.svgWrapper
+		@onSetDrag = (dragSet) ->
+			if dragSet
+				$(el).on "mousedown",divMouseDown
+				$(el).on "mouseup",divMouseUp
+				$(el).on "mousemove",divMouseMove
+				$(el).on "mousewheel",divMouseWheel
+			else
+				$(el).off "mousedown",divMouseDown
+				$(el).off "mouseup",divMouseUp
+				$(el).off "mousemove",divMouseMove
+				$(el).off "mousewheel",divMouseWheel
 	computed:
 		transform: ()->
 			"translate("+@trans.dx+","+@trans.dy+")"+"scale("+@trans.scale+")"

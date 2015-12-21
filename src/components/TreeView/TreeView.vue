@@ -164,7 +164,7 @@ module.exports=
 				.attr("dx", (d)->d.children?-10:10)
 			that = @
 			node.on "click",(d)->
-				that.$dispatch "event_node_select",d
+				that.$dispatch "event_select_node",d
 			link = d3.select(@$el).select("g.link-group").selectAll("g.link")
 				.data(links, (d)->d.target.id)
 			link.enter().insert("path","g").attr("class","link")
