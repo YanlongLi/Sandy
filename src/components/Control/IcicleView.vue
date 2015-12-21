@@ -1,9 +1,9 @@
 <template>
 
 <div>
-	<fildset>
+	<fieldset>
 		<legend>Tree Style</legend>
-	</fildset>
+	</fieldset>
 </div>
 
 </template>
@@ -15,8 +15,7 @@
 module.exports=
 	data: () ->
 		return {}
-	methods: () ->
-		return {}
+	methods: {}
 
 </script>
 

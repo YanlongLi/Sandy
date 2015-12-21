@@ -4,10 +4,10 @@
 <div class="row group">
 	<p>Current View</p>
 	<div class="input-group">
-		<input type="radio" v-model="curView" v-bind:value="'treeView'" /> Tree View
-		<input type="radio" v-model="curView" v-bind:value="'treemapView'" /> Treemap View
-		<input type="radio" v-model="curView" v-bind:value="'icicleView'" /> Icicle View
-		<input type="radio" v-model="curView" v-bind:value="'indentView'" /> Indent View
+		<input type="radio" v-model="curView" v-bind:value="'tree'" /> Tree View
+		<input type="radio" v-model="curView" v-bind:value="'treemap'" /> Treemap View
+		<input type="radio" v-model="curView" v-bind:value="'icicle'" /> Icicle View
+		<input type="radio" v-model="curView" v-bind:value="'indent'" /> Indent View
 	</div>
 </div>
 
@@ -39,7 +39,7 @@ module.exports =
 		attrLst: controlStore.attrLst
 		selLst: controlStore.selLst
 		curAttr: ""
-		curView: "treeView"
+		curView: "tree"
 	watch:
 		curView: (name)->
 			@$dispatch "event_change_view",name

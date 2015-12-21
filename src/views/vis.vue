@@ -11,6 +11,12 @@
 			</div>
 		</div>
 		<div class="panel">
+			<div class="panel-header">View Control Panel</div>
+			<div class="panel-body">
+				<component :is="curViewControl" keep-alive ></component>
+			</div>
+		</div>
+		<div class="panel">
 			<div class="panel-header">Attribute Panel</div>
 			<div class="panel-body">
 				<attribute-panel></attribute-panel>
@@ -38,6 +44,11 @@ treemapview = require "../components/TreemapView/TreemapView.vue"
 icicleview = require "../components/IcicleView/IcicleView.vue"
 indentview = require "../components/IndentView/IndentView.vue"
 
+treecontrol = require "../components/Control/TreeView.vue"
+treemapcontrol = require "../components/Control/TreemapView.vue"
+iciclecontrol = require "../components/Control/IcicleView.vue"
+indentcontrol = require "../components/Control/IndentView.vue"
+
 control = require "../components/Control/ControlPanel.vue"
 attribute = require "../components/Attribute/AttributePanel.vue"
 toolbar = require "../components/toolbar.vue"
@@ -49,6 +60,10 @@ module.exports=
 		icicleView: icicleview
 		indentView: indentview
 		controlPanel: control
+		treeControl: treecontrol
+		treemapControl: treemapcontrol
+		icicleControl: iciclecontrol
+		indentControl: indentcontrol
 		attributePanel: attribute
 		toolbar: toolbar
 	data: ()->
@@ -56,7 +71,8 @@ module.exports=
 			dx:20
 			dy:20
 			scale:0.8
-		curView: "treeView"
+		curView: "tree"+"View"
+		curViewControl: "tree"+"Control"
 	events:
 		event_set_drag: (dragSet)->
 			@$broadcast "event_drag_set",dragSet
@@ -69,9 +85,13 @@ module.exports=
 			@$broadcast "event_select_node",node
 		event_change_view: (viewName)->
 			@onChangeView(viewName)
+		event_tree_change_layout: (layout)->
+			@$broadcast "event_tree_change_layout",layout
+			
 	methods:
 		onChangeView: (viewName)->
-			@curView = viewName
+			@curView = viewName+"View"
+			@curViewControl = viewName+"Control"
 		onSetDrag: ()->
 			false
 	ready: ()->

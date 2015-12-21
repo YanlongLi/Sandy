@@ -68,14 +68,15 @@ module.exports=
 					@drawTree()
 				when "cluster"
 					@drawTreeCluster()
-				when "radialTree"
+				when "radial"
 					@drawRadial()
-				when "radialCluster"
+				when "radial_cluster"
 					@drawRadialCluster()
 				else
 					console.error "illegal layout name",lname
 	events:
 		event_tree_change_layout: (layoutName)->
+			console.log layoutName
 			@layout = layoutName
 	methods:
 		initEle: ()->
