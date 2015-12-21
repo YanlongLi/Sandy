@@ -4,21 +4,21 @@
 		<toolbar :trans="trans"></toolbar>
 	</div>
 	<div class="panel-wrapper">
-		<div class="panel">
-			<div class="panel-header">Control Panel</div>
-			<div class="panel-body">
+		<div class="mypanel">
+			<div class="mypanel-header">Control Panel</div>
+			<div class="mypanel-body">
 				<control-panel></control-panel>
 			</div>
 		</div>
-		<div class="panel">
-			<div class="panel-header">View Control Panel</div>
-			<div class="panel-body">
+		<div class="mypanel">
+			<div class="mypanel-header">View Control Panel</div>
+			<div class="mypanel-body">
 				<component :is="curViewControl" keep-alive ></component>
 			</div>
 		</div>
-		<div class="panel">
-			<div class="panel-header">Attribute Panel</div>
-			<div class="panel-body">
+		<div class="mypanel">
+			<div class="mypanel-header">Attribute Panel</div>
+			<div class="mypanel-body">
 				<attribute-panel></attribute-panel>
 			</div>
 		</div>
@@ -156,16 +156,22 @@ $panel_width = 340px
 		left 0
 		width $panel_width
 		overflow scroll
-		.panel
-			.panel-header
+		.mypanel
+			background-color #d9edf7
+			border 1px solid #333333
+			border-radius 4px
+			margin-bottom 20px
+			.mypanel-header
 				height 30px
 				width 100%
 				text-align center
-				vertical-align center
-				background-color: #999999
-			.panel-body
-				border 1px solid #928787
+				line-height:30px
+			.mypanel-body
 				min-height 60px
+				border 1px solid #666666
+				margin 0 4px 4px
+				background-color white
+				padding 6px 10px
 	.toolbar
 		position absolute
 		top 10px

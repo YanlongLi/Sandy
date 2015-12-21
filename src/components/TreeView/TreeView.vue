@@ -170,7 +170,19 @@ module.exports=
 				.data(links, (d)->d.target.id)
 			link.enter().insert("path","g").attr("class","link")
 				.attr("d",diagonal).style("fill","none")
-		
+	compiled: ()->
+		size = controlStore.getSize()
+		width = size.width * 5
+		height = size.height * 5
+		step = 40
+		grid = d3.select(@$el).select(".grid")
+		grid.append("g").selectAll("line").data(d3.range(-width,width,step)).enter()
+			.append("line").attr("x1", (d)->d).attr("y1",-height)
+			.attr("x2", (d)->d).attr("y2",height)
+		grid.append("g").selectAll("line").data(d3.range(-height,height,step)).enter()
+			.append("line").attr("y1", (d)->d).attr("x1",-width)
+			.attr("y2", (d)->d).attr("x2",width)
+
 </script>
 
 <style lang="stylus">
