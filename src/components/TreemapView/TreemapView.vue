@@ -75,7 +75,7 @@ module.exports =
 				.attr("height",(d)->ky*d.dy)
 	methods:
 		onNodeSelect: ()->
-			@$dispatch "event_node_select",{name:"node",depth:2}
+			@$dispatch "event_select_node",{name:"node",depth:2}
 	ready: ()->
 		that = @
 		@$on "event_drag_set",(v)->

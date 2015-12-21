@@ -23,6 +23,24 @@
 		</div>
 	</div>
 </div>
+
+<div class="row group">
+	<div class="col-md-3 left">Size By</div>
+	<div class="col-md-9 right">
+		<v-select :value.sync="sizeBy" :placeholder="'size by'">
+			<v-option v-for="attr in attrLst" :value="attr.name"></v-option>
+		</v-select>
+	</div>
+</div>
+<div class="row group">
+	<div class="col-md-3 left">Color By</div>
+	<div class="col-md-9 right">
+		<v-select :value.sync="colorBy" :placeholder="'color by'">
+			<v-option v-for="attr in attrLst" :value="attr.name"></v-option>
+		</v-select>
+	</div>
+</div>
+
 </div>
 
 </template>
@@ -31,18 +49,30 @@
 
 attrSelect = require "./attrSelect.vue"
 controlStore = require "../../utils/ControlStore.coffee"
+select = require("vue-strap").select
+option = require("vue-strap").option
 
 module.exports =
 	components:
 		attrSelect: attrSelect
+		vSelect: select
+		vOption: option
 	data:()->
 		attrLst: controlStore.attrLst
 		selLst: controlStore.selLst
 		curAttr: ""
 		curView: "tree"
+		colorBy: []
+		sizeBy: []
 	watch:
 		curView: (name)->
-			@$dispatch "event_change_view",name
+			@$dispatch "event_control_change_view",name
+		sizeBy: (sels)->
+			return if !sels.length
+			@$dispatch "event_control_change_size_by",sels[0]
+		colorBy: (sels)->
+			return if !sels.length
+			@$dispatch "event_control_change_color_by",sels[0]
 	methods:
 		add: ()->
 			@selLst.push 0

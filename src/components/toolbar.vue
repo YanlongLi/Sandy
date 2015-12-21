@@ -15,10 +15,10 @@ module.exports=
 		dragSet: false
 	watch:
 		dragSet: (dragSet) ->
-			@$dispatch "event_set_drag",dragSet
+			@$dispatch "event_toolbar_set_drag",dragSet
 	methods:
 		resetPosition: ()->
-			@$dispatch "event_reset_position"
+			@$dispatch "event_toolbar_reset_position"
 
 </script>
 

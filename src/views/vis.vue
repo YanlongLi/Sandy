@@ -74,16 +74,16 @@ module.exports=
 		curView: "tree"+"View"
 		curViewControl: "tree"+"Control"
 	events:
-		event_set_drag: (dragSet)->
+		event_toolbar_set_drag: (dragSet)->
 			@$broadcast "event_drag_set",dragSet
 			@onSetDrag(dragSet)
-		event_reset_position: ()->
+		event_toolbar_reset_position: ()->
 			@trans.scale = 0.8
 			@trans.dx = 20
 			@trans.dy = 20
 		event_select_node: (node)->
 			@$broadcast "event_select_node",node
-		event_change_view: (viewName)->
+		event_control_change_view: (viewName)->
 			@onChangeView(viewName)
 		event_tree_change_layout: (layout)->
 			@$broadcast "event_tree_change_layout",layout
@@ -147,8 +147,10 @@ $panel_width = 340px
 	.panel-wrapper
 		position absolute
 		top 10px
+		bottom statusbar_height
 		left 0
 		width $panel_width
+		overflow scroll
 		.panel
 			.panel-header
 				height 30px
