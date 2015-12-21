@@ -53,6 +53,8 @@ control = require "../components/Control/ControlPanel.vue"
 attribute = require "../components/Attribute/AttributePanel.vue"
 toolbar = require "../components/toolbar.vue"
 
+controlStore = require "../utils/ControlStore.coffee"
+
 module.exports=
 	components:
 		treeView: treeview
@@ -95,6 +97,10 @@ module.exports=
 		onSetDrag: ()->
 			false
 	ready: ()->
+		el = @$els.svgWrapper
+		w = $(el).width()
+		h = $(el).height()
+		controlStore.setSize({width:w,height:h})
 		isMouseDown = false
 		trans = @trans
 		divMouseWheel= (event)->
@@ -112,7 +118,6 @@ module.exports=
 			return if !isMouseDown
 			trans.dx += event.originalEvent.movementX
 			trans.dy += event.originalEvent.movementY
-		el = @$els.svgWrapper
 		@onSetDrag = (dragSet) ->
 			if dragSet
 				$(el).on "mousedown",divMouseDown

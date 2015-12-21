@@ -6,8 +6,8 @@ DataStore = ()->
 	store = {}
 	##
 	size =
-		width: $(window).width()
-		height: $(window).height()
+		width: 800
+		height: 600
 	store.getSize = ()->
 		size
 	store.setSize = (s)->
