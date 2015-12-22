@@ -16,7 +16,7 @@ DataStore = ()->
 		if s.height
 			size.height = s.height
 	##
-	store.attrLst = [{key:"key1",name:"name1"},{key:"key2",name:"name2"},{key:"key3",name:"name3"},{key:"key4",name:"name4"}]
+	store.attrLst = ["name1","name2","name3","name4","name5"]
 	store.selLst = []
 	return store
 

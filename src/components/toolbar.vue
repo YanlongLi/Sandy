@@ -1,6 +1,9 @@
 <template>
 <div>
-		<span :class="{'btn-primary-outline':!dragSet, 'btn-primary':dragSet}" @click="dragSet=!dragSet"><i class="fa fa-arrows"></i></span>
+		<span :class="{'btn-primary-outline':!dragSet, 'btn-primary':dragSet,'icon-wrapper':true}" @click="dragSet=!dragSet"><i class="fa fa-arrows"></i></span>
+		<span class="btn-primary-outline icon-wrapper"><i class="glyphicon glyphicon-zoom-in"></i></span>
+		<span class="btn-primary-outline icon-wrapper"><i class="glyphicon glyphicon-zoom-out"></i></span>
+		<span class="btn-primary-outline icon-wrapper"><i class="glyphicon glyphicon-fullscreen"></i></span>
 		<span>Scale: {{Math.floor(trans.scale*100)}} %</span>
 		<span @click="resetPosition"><i class="fa fa-refresh"></i></span>
 		<div class="form-group searchfield">
@@ -26,6 +29,10 @@ module.exports=
 </script>
 
 <style lang="stylus">
+
+.icon-wrapper
+	font-size 20px
+	margin-left 10px
 
 .searchfield
 	float right

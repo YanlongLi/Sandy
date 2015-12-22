@@ -16,12 +16,13 @@
 	<span class="name">Group By</span>
 	<span class="vals">
 		<div v-for="attr in selLst" track-by="$index">
-			<attr-select :lst="attrLst" :val="+attr" :idx="$index" @item_change="change"></attr-select>
+			<v-select :value.sync="selLst[$index]">
+				<v-option v-for="key in attrLst" :value="key"></v-option>
+			</v-select>
 			<span class="pull-right" @click="remove($index)"><i class="fa fa-minus"></i><span>
 		</div>
-		<div>
+	<span>
 			<span class="pull-right" @click="add"><i class="fa fa-plus"></i><span>
-		</div>
 	</span>
 	<div style="clear:both"></div>
 </div>
@@ -30,7 +31,7 @@
 	<span class="name">Size By</span>
 	<div class="vals">
 		<v-select :value.sync="sizeBy" :placeholder="'size by'">
-			<v-option v-for="attr in attrLst" :value="attr.name"></v-option>
+			<v-option v-for="attr in attrLst" :value="attr"></v-option>
 		</v-select>
 	</div>
 	<div style="clear:both"></div>
@@ -39,7 +40,7 @@
 	<span class="name">Color By</span>
 	<div class="vals">
 		<v-select :value.sync="colorBy" :placeholder="'color by'">
-			<v-option v-for="attr in attrLst" :value="attr.name"></v-option>
+			<v-option v-for="attr in attrLst" :value="attr"></v-option>
 		</v-select>
 	</div>
 	<div style="clear:both"></div>
@@ -51,14 +52,12 @@
 
 <script lang="coffee">
 
-attrSelect = require "./attrSelect.vue"
 controlStore = require "../../utils/ControlStore.coffee"
 select = require("vue-strap").select
 option = require("vue-strap").option
 
 module.exports =
 	components:
-		attrSelect: attrSelect
 		vSelect: select
 		vOption: option
 	data:()->
@@ -79,30 +78,15 @@ module.exports =
 			@$dispatch "event_control_change_color_by",sels[0]
 	methods:
 		add: ()->
-			@selLst.push 0
+			@selLst.push [""]
 		remove: (index)->
 			@selLst.splice(index, 1)
 		change: (index,val)->
 			@selLst[index] = val
 </script>
 
+<style lang="stylus" src="../../css/cgroup.stylus"></style>
 
 <style lang="stylus" scoped>
-
-.group
-	margin-bottom 10px
-	.name
-		width 80px
-		font-weight bold
-		float left
-		text-align right
-	.vals
-		float right
-		width 200px
-		select
-			width 160px
-			height 26px
-			line-height 26px
-			margin-bottom 6px
 
 </style>
