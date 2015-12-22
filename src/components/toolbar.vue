@@ -3,6 +3,9 @@
 		<span :class="{'btn-primary-outline':!dragSet, 'btn-primary':dragSet}" @click="dragSet=!dragSet"><i class="fa fa-arrows"></i></span>
 		<span>Scale: {{Math.floor(trans.scale*100)}} %</span>
 		<span @click="resetPosition"><i class="fa fa-refresh"></i></span>
+		<div class="form-group searchfield">
+			<input type="text" class="form-control" placeholder="Search">
+		</div>
 <div>
 </template>
 
@@ -23,5 +26,14 @@ module.exports=
 </script>
 
 <style lang="stylus">
+
+.searchfield
+	float right
+	margin 0
+	input
+		line-height 30px
+		height 30px
+		padding-top 0
+		padding-bottom 0
 
 </style>

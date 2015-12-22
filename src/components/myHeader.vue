@@ -1,16 +1,23 @@
 <template>
 
 <nav class="navbar navbar-default">
-	<div class="navbar-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<div class="navbar-brand"><span>Hierarchical Data Visualization</span></div>
+		</div>
+		<div class="navbar-right">
+			<span>About</span>
+		</div>
+		<div class="clear:both"></div>
 	</div>
 </nav>
 
 </template>
 
-<script>
+<script lang="coffee">
 
 </script>
 
-<style>
+<style lang="stylus" scoped>
 
 </style>

@@ -10,6 +10,7 @@ module.exports = {
       {test: /\.vue$/, loader:'vue'},
       {test: /\.coffee$/, loader:'coffee'},
       {test: /\.json$/, loader:'json'},
+      {test: /\.stylus/, loader:'css!stylus'},
     ]
   }
   /*

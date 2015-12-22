@@ -1,7 +1,4 @@
 <template>
-<button class="btn btn-primary btn-lg" @click="isUpload=true">
-Big modal
-</button>
 
 <modal title="Load Data" :show.sync="isUpload" effect="fade" :width="800">
   <div class="modal-body">

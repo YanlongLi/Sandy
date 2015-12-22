@@ -15,7 +15,11 @@ router = new VueRouter
   history: false
   transitionOnLoad: true
 
-app = Vue.extend {}
+header = require "./components/myHeader.vue"
+
+app = Vue.extend
+	components:
+		myHeader: header
 
 require("./routers.coffee")(router)
 

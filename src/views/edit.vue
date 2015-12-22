@@ -1,24 +1,59 @@
 
 <template>
-
-<div class="container base">
-	<div class="row">
-		<div class="container row">
-			<div class="col-md-4"><label>Data File</label></div>
-			<div class="col-md-6"><input type="file" /> </div>
-			<div class="col-md-2"><button class="btn btn-primary">Submit</button></div>
+<div class="container">
+<div class="panel-group">
+	<div class="panel panel-primary">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+			<div class="input-group">
+				<div class="input-group-btn">
+					<span class="btn btn-default btn-file">Choose File<input type="file" @change="fileChange"/></span>
+				</div>
+				<input type="text" v-model="localFilePath" class="myinput" readonly/>
+				<span class="btn btn-primary pull-right">Add</span>
+			</div>
+			<div class="input-group">
+				<div class="row">
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Dataset Name</label><input type="text" class="form-control"/>
+					</div>
+					</div>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Dataset Description</label><input type="text" class="form-control"/>
+					</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="row">
-		<p>current dataset : {{curDataSet}}</p>
-		<div v-for="dataset in datasets" track-by="$index" class="container">
-			<div @click="changeDataSet(dataset.name)" class="col-md-6 dataname">{{dataset.name}}</div>
-			<div class="col-md-6 datadesc">{{dataset.description}}</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+			<h4>CURRENT DATASET : {{curDataset.name || ''}}</h4>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>DatasetName</th>
+						<th>DatasetDescription</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="dataset in datasets" track-by="$index" :class="{'info':curDataset.key==dataset.key}">
+						<td @click="changeDataSet(dataset)" class="">{{dataset.name}}</td>
+						<td class="">{{dataset.description}}</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
-	<div class="row">
-		<data-table></data-table>
+	<div class="panel panel-primary">
+		<div class="panel-body">
+			<data-table v-if="curDataset.type == 'csv'" :cur-dataset="curDataset"></data-table>
+		</div>
 	</div>
+</div>
 </div>
 
 </template>
@@ -35,29 +70,42 @@ module.exports=
 			resolve datasets:data
 		return
 	data: ()->
+		localFilePath: ""
 		datasets: []
-		curDataSet:""
+		curDataset:{}
 	methods:
+		fileChange: (evt)->
+			if evt.target.files.length
+				@localFilePath = evt.target.files[0].name
+			return
 		changeDataSet: (dataset)->
-			@curDataSet = dataset
-			resource = @$resource "/datasets/:name"
-			resource.get {name:dataset},(data,status)->
-				console.log dataset,data
+			@$set "curDataset",dataset
 </script>
 
 <style lang="stylus" scoped>
 
-.base
-	margin-top 30px
-	line-height 30px
-	padding 20px
-	border 1px solid #CCCCCC
+.btn-file 
+	position relative
+	overflow hidden
+	input[type=file]
+		position absolute
+		top 0
+		right 0
+		min-width 100%
+		min-height 100%
+		font-size 100px
+		text-align right
+		opacity 0
+		outline none
+		background white
+		cursor inherit
+		display block
 
-dataname
-	font-weight bold
-
-datadesc
-	font-style italic
+.myinput
+	padding-left 10px
+	width 571px
+	height 34px
+	margin-right 40px
 
 </style>
 

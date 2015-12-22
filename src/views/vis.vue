@@ -4,21 +4,21 @@
 		<toolbar :trans="trans"></toolbar>
 	</div>
 	<div class="panel-wrapper">
-		<div class="mypanel">
-			<div class="mypanel-header">Control Panel</div>
-			<div class="mypanel-body">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Control Panel</div>
+			<div class="panel-body">
 				<control-panel></control-panel>
 			</div>
 		</div>
-		<div class="mypanel">
-			<div class="mypanel-header">View Control Panel</div>
-			<div class="mypanel-body">
+		<div class="panel panel-primary">
+			<div class="panel-heading">View Control Panel</div>
+			<div class="panel-body">
 				<component :is="curViewControl" keep-alive ></component>
 			</div>
 		</div>
-		<div class="mypanel">
-			<div class="mypanel-header">Attribute Panel</div>
-			<div class="mypanel-body">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Attribute Panel</div>
+			<div class="panel-body">
 				<attribute-panel></attribute-panel>
 			</div>
 		</div>
@@ -137,7 +137,7 @@ module.exports=
 
 <style lang="stylus" scoped>
 
-menubar_height = 30px
+menubar_height = 50px
 statusbar_height = 30px
 toolbar_height = 30px
 $panel_wrapper_width = 400px
@@ -156,22 +156,6 @@ $panel_width = 340px
 		left 0
 		width $panel_width
 		overflow scroll
-		.mypanel
-			background-color #d9edf7
-			border 1px solid #333333
-			border-radius 4px
-			margin-bottom 20px
-			.mypanel-header
-				height 30px
-				width 100%
-				text-align center
-				line-height:30px
-			.mypanel-body
-				min-height 60px
-				border 1px solid #666666
-				margin 0 4px 4px
-				background-color white
-				padding 6px 10px
 	.toolbar
 		position absolute
 		top 10px
