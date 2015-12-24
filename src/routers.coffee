@@ -14,3 +14,6 @@ module.exports = (router)->
     "/vis":
       name:"vis"
       component: require "./views/vis.vue"
+		"/test":
+			name: "test"
+			component: require "./test/test.vue"
