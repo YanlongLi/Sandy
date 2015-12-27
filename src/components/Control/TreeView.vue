@@ -55,7 +55,8 @@ module.exports=
 		curLayout: (layout)->
 			@$dispatch "event_tree_change_layout",layout
 		radiusExtent: (val)->
-			@$dispatch "event_tree_change_radius_scale",val
+			extent = [+val[0],+val[1]]
+			@$dispatch "event_tree_change_radius_scale",extent
 	methods: {}
 
 </script>

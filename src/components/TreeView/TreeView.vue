@@ -2,7 +2,6 @@
 <g>
 <g class="grid" v-el="grid"></g>
 	<g class="circle-group">
-		<circle r="4" cx="200" cy="300"></circle>
 		<!--<nodecomp v-for="node in nodes" :node="node" :radius="radius(node)" :style="style(node)"></nodecomp>-->
 	</g>
 	<g class="link-group">
@@ -21,8 +20,6 @@ d3 = require "d3"
 controlStore = require "../../utils/ControlStore.coffee"
 
 module.exports=
-	props:
-		root: Object
 	data:()->
 		size = controlStore.getSize()
 		[width,height] = [size.width,size.height]
@@ -54,16 +51,9 @@ module.exports=
 		layout: "tree" # "cluster","radialTree","radialCluster"
 		scale: scale
 	asyncData: (resolve, reject)->
-		@$http.get "/data/flare.json", (root)->
-			resolve root:root
-			@initEle()
-			# that = @
-			# setInterval ()->
-			# 	names = ["tree","cluster","radialTree","radialCluster"]
-			# 	index = Math.round(Math.random()*3)
-			# 	console.log "change layout",index,names[index]
-			# 	that.layout = names[index]
-			# ,3000
+		# @$http.get "/data/flare.json", (root)->
+		# 	resolve root:root
+		# 	@initEle()
 		return
 	watch:
 		layout: (lname)->
@@ -85,13 +75,15 @@ module.exports=
 					console.error "illegal layout name",lname
 			@$dispatch "event_fix_position",dx,dy
 	events:
+		event_control_change_root: (root)->
+			@root = root
+			@initEle()
 		event_tree_change_layout: (layoutName)->
 			@layout = layoutName
 		event_tree_change_radius_scale: ([s1,s2])->
-			console.log "change_scale",s1,s2
-			scale = @scale.range([s1,s2])		
+			scale = @scale.range([s1,s2])
 			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
-			node.select("circle").attr("r",(d)->scale(d.size) or 4)
+			node.select("circle").attr("r",(d)-> scale(d.size) or 4)
 	methods:
 		initEle: ()->
 			i = 0
@@ -104,7 +96,10 @@ module.exports=
 			nodes = layout.nodes root
 			links = layout.links nodes
 			scale = @scale
+			nodes.forEach (d)-> d.size = (if d.items then d.items.length else 1)
 			scale.domain(d3.extent(nodes,(d)->d.size)).range([3,10])
+			d3.select(@$el).select("g.circle-group").selectAll("g.node").remove()
+			d3.select(@$el).select("g.link-group").selectAll("path.link").remove()
 			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
 				.data(nodes,(d)->d.id || d.id=++i).enter().append("g").attr("class","node")
 				.attr("transform",transform)

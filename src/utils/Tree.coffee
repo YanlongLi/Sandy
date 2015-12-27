@@ -31,7 +31,6 @@ class Tree
 	_tranverse: (node, nodefn, leaffn) ->
 		leaffn = nodefn if !leaffn
 		resarr = if node.children then (@_tranverse child,nodefn,leaffn for child in node.children) else (leaffn.call item,item for item in node.items)
-		console.log resarr
 		return nodefn.call node,resarr
 
 module.exports = Tree

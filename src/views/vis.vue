@@ -38,6 +38,7 @@
 
 d3 = require "d3"
 $ = require "jquery"
+_ = require "underscore"
 
 treeview = require "../components/TreeView/TreeView.vue"
 treemapview = require "../components/TreemapView/TreemapView.vue"
@@ -95,7 +96,7 @@ module.exports=
 				return
 			tree = new Tree @data.data
 			tree.treefy sels
-			console.log tree.root
+			tree.tranverse d3.sum,()->1
 			@$broadcast "event_control_change_root",tree.root
 		event_fix_position: (dx,dy)->
 			@fix.dx = dx
