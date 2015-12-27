@@ -21,21 +21,24 @@ d3 = require "d3"
 controlStore = require "../../utils/ControlStore.coffee"
 
 module.exports=
+	props:
+		root: Object
 	data:()->
 		size = controlStore.getSize()
 		[width,height] = [size.width,size.height]
-		[diameter,duration] = [width,2000]
+		[diameter,duration] = [height,2000]
 		#
-		tree = d3.layout.tree().size([height, width - 160])
-		cluster = d3.layout.cluster().size([height, width - 160])
+		tree = d3.layout.tree().size([height, width])
+		cluster = d3.layout.cluster().size([height, width])
 		radialTree = d3.layout.tree().size([360, diameter / 2 ])
 			.separation((a, b)-> if a.parent == b.parent then 1/a.depth else 2/a.depth)
 		radialCluster = d3.layout.cluster().size([360, diameter / 2 ])
 			.separation((a, b)-> if a.parent == b.parent then 1/a.depth else 2/a.depth)
 		#
-		diagonal = d3.svg.diagonal().projection((d)->[d.y-diameter/2, d.x-diameter/2])
+		diagonal = d3.svg.diagonal().projection((d)->[d.y, d.x])
 		radialDiagonal = d3.svg.diagonal.radial()
 			.projection((d)->[d.y, d.x / 180 * Math.PI])
+		scale = d3.scale.linear()
 		#
 		root:{}
 		width: width
@@ -49,6 +52,7 @@ module.exports=
 		diagonal:diagonal
 		radialDiagonal: radialDiagonal
 		layout: "tree" # "cluster","radialTree","radialCluster"
+		scale: scale
 	asyncData: (resolve, reject)->
 		@$http.get "/data/flare.json", (root)->
 			resolve root:root
@@ -63,33 +67,44 @@ module.exports=
 		return
 	watch:
 		layout: (lname)->
+			[dx,dy] = [0,0]
 			switch lname
 				when "tree"
 					@drawTree()
 				when "cluster"
 					@drawTreeCluster()
 				when "radial"
+					dx = controlStore.size.width/2
+					dy = controlStore.size.height/2
 					@drawRadial()
 				when "radial_cluster"
+					dx = controlStore.size.width/2
+					dy = controlStore.size.height/2
 					@drawRadialCluster()
 				else
 					console.error "illegal layout name",lname
+			@$dispatch "event_fix_position",dx,dy
 	events:
 		event_tree_change_layout: (layoutName)->
-			console.log layoutName
 			@layout = layoutName
+		event_tree_change_radius_scale: ([s1,s2])->
+			console.log "change_scale",s1,s2
+			scale = @scale.range([s1,s2])		
+			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
+			node.select("circle").attr("r",(d)->scale(d.size) or 4)
 	methods:
 		initEle: ()->
 			i = 0
 			root = @root
 			layout = @tree
 			radius = @diameter/2
-			transform = (d)->"translate("+(d.y-radius)+","+(d.x-radius)+")"
+			transform = (d)->"translate("+d.y+","+d.x+")"
 			# transform = (d)->"translate("+d.y+","+d.x+")"
 			diagonal = @diagonal
 			nodes = layout.nodes root
 			links = layout.links nodes
-			scale = d3.scale.linear().domain(d3.extent(nodes,(d)->d.size)).range([3,10])
+			scale = @scale
+			scale.domain(d3.extent(nodes,(d)->d.size)).range([3,10])
 			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
 				.data(nodes,(d)->d.id || d.id=++i).enter().append("g").attr("class","node")
 				.attr("transform",transform)
@@ -102,7 +117,7 @@ module.exports=
 			layout = @tree
 			duration = @duration
 			radius = @diameter/2
-			transform = (d)->"translate("+(d.y-radius)+","+(d.x-radius)+")"
+			transform = (d)->"translate("+d.y+","+d.x+")"
 			diagonal = @diagonal
 			@update(root,layout,duration,transform,diagonal)
 			return
@@ -111,7 +126,7 @@ module.exports=
 			layout = @cluster
 			duration = @duration
 			radius = @diameter/2
-			transform = (d)->"translate("+(d.y-radius)+","+(d.x-radius)+")"
+			transform = (d)->"translate("+d.y+","+d.x+")"
 			diagonal = @diagonal
 			@update(root,layout,duration,transform,diagonal)
 			return

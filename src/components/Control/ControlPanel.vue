@@ -56,20 +56,34 @@ controlStore = require "../../utils/ControlStore.coffee"
 select = require("vue-strap").select
 option = require("vue-strap").option
 
+_ = require "underscore"
+
 module.exports =
 	components:
 		vSelect: select
 		vOption: option
 	data:()->
-		attrLst: controlStore.attrLst
-		selLst: controlStore.selLst
+		# attrLst: controlStore.attrLst
+		# selLst: controlStore.selLst
+		data: {}
+		attrLst: []
+		typeLst: []
+		selLst: []
 		curAttr: ""
 		curView: "tree"
 		colorBy: []
 		sizeBy: []
+	events:
+		event_load_data: (data)->
+			@data = data
+			@attrLst = data.schema.name
+			@typelst = data.schema.type
 	watch:
 		curView: (name)->
 			@$dispatch "event_control_change_view",name
+		selLst: (sels)->
+			res = _.uniq(sels.map (d)->d[0])
+			@$dispatch "event_control_change_sellst",res
 		sizeBy: (sels)->
 			return if !sels.length
 			@$dispatch "event_control_change_size_by",sels[0]
@@ -78,7 +92,8 @@ module.exports =
 			@$dispatch "event_control_change_color_by",sels[0]
 	methods:
 		add: ()->
-			@selLst.push [""]
+			if @attrLst.length
+				@selLst.push [@attrLst[0]]
 		remove: (index)->
 			@selLst.splice(index, 1)
 		change: (index,val)->

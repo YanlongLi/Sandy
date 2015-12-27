@@ -15,9 +15,9 @@
 		<span class="name">Radius</span>
 		<div class="input-group vals">
 			<label>min(px)</label>
-			<input type="input" v-model="radiusExtent[0]"/>
+			<input type="number" v-model="radiusExtent[0]" min="1" max="20"/>
 			<label>max(px)</label>
-			<input type="input" v-model="radiusExtent[1]"/>
+			<input type="number" v-model="radiusExtent[1]" min="5" max="20"/>
 		</div>
 		<div style="clear:both"></div>
 	</div>
@@ -54,6 +54,8 @@ module.exports=
 	watch:
 		curLayout: (layout)->
 			@$dispatch "event_tree_change_layout",layout
+		radiusExtent: (val)->
+			@$dispatch "event_tree_change_radius_scale",val
 	methods: {}
 
 </script>

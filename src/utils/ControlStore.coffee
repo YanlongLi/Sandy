@@ -1,25 +1,20 @@
 
 
-$ = require "jquery"
-
-DataStore = ()->
-	store = {}
-	##
-	size =
+store = {
+	size:
 		width: 800
 		height: 600
-	store.getSize = ()->
-		size
-	store.setSize = (s)->
-		if s.width
-			size.width = s.width
-		if s.height
-			size.height = s.height
-	##
-	store.attrLst = ["name1","name2","name3","name4","name5"]
-	store.selLst = []
-	return store
-
-store = DataStore()
+	fix:
+		dx:0
+		dy:0
+	pos:
+		dx:20
+		dy:20
+		scale:0.8
+	setSize: (size)->
+		@size.width = size.width
+		@size.height = size.height
+	getSize: ()-> @size
+}
 
 module.exports = store

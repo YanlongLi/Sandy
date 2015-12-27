@@ -13,7 +13,7 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading">View Control Panel</div>
 			<div class="panel-body">
-				<component :is="curViewControl" keep-alive ></component>
+				<component :is="curViewControl"></component>
 			</div>
 		</div>
 		<div class="panel panel-primary">
@@ -26,7 +26,7 @@
 	<div class="view-wrapper" v-el:svg-wrapper>
 		<svg width="100%" height="100%">
 			<g class="view" :transform="transform">
-				<component :is="curView" keep-alive ></component>
+				<component :is="curView"></component>
 			</g>
 		</svg>
 	</div>
@@ -55,6 +55,8 @@ toolbar = require "../components/toolbar.vue"
 
 controlStore = require "../utils/ControlStore.coffee"
 
+Tree = require "../utils/Tree.coffee"
+
 module.exports=
 	components:
 		treeView: treeview
@@ -69,13 +71,35 @@ module.exports=
 		attributePanel: attribute
 		toolbar: toolbar
 	data: ()->
-		trans:
-			dx:20
-			dy:20
-			scale:0.8
+		trans: controlStore.pos
+		fix: controlStore.fix
 		curView: "tree"+"View"
 		curViewControl: "tree"+"Control"
+		data: 0
+		root: {}
+	asyncData: (resove,reject)->
+		dataKey = "signal"
+		that = @
+		@$http.get "datasets/"+dataKey,(data)->
+			fn = d3.csv
+			if data.type == "json"
+				fn = d3.json
+			fn data.path, (d)->
+				data.data = d
+			that.data = data
+			that.$broadcast "event_load_data",data
+		return
 	events:
+		event_control_change_sellst: (sels)->
+			if !@data or @data.type == 'json'
+				return
+			tree = new Tree @data.data
+			tree.treefy sels
+			console.log tree.root
+			@$broadcast "event_control_change_root",tree.root
+		event_fix_position: (dx,dy)->
+			@fix.dx = dx
+			@fix.dy = dy
 		event_toolbar_set_drag: (dragSet)->
 			@$broadcast "event_drag_set",dragSet
 			@onSetDrag(dragSet)
@@ -89,9 +113,12 @@ module.exports=
 			@onChangeView(viewName)
 		event_tree_change_layout: (layout)->
 			@$broadcast "event_tree_change_layout",layout
-			
+		event_tree_change_radius_scale: (scale)->
+			@$broadcast "event_tree_change_radius_scale",scale
 	methods:
 		onChangeView: (viewName)->
+			@fix.dx = 0
+			@fix.dy = 0
 			@curView = viewName+"View"
 			@curViewControl = viewName+"Control"
 		onSetDrag: ()->
@@ -131,7 +158,9 @@ module.exports=
 				$(el).off "mousewheel",divMouseWheel
 	computed:
 		transform: ()->
-			"translate("+@trans.dx+","+@trans.dy+")"+"scale("+@trans.scale+")"
+			dx = @trans.dx + @fix.dx
+			dy = @trans.dy + @fix.dy
+			"translate("+dx+","+dy+")"+"scale("+@trans.scale+")"
 
 </script>
 

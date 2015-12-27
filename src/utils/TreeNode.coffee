@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 class TreeNode
 
 	constructor: (@_attr, @_val, @items) ->
@@ -11,5 +13,7 @@ class TreeNode
 			obj[val].push item
 			return
 		@children = (new TreeNode attr,val,items for val,items of obj)
-		delete @items
+		# delete @items
 		return
+
+module.exports = TreeNode

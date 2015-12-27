@@ -9,6 +9,7 @@ class Tree
 		delete @root.children if @root.children
 		@root.items = @items
 		@_treefy [@root],lst
+		@root
 
 	_treefy: (nodes, lst) ->
 		return nodes if !lst.length
@@ -33,3 +34,4 @@ class Tree
 		console.log resarr
 		return nodefn.call node,resarr
 
+module.exports = Tree

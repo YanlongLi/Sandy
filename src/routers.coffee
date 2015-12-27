@@ -3,8 +3,8 @@
 module.exports = (router)->
   router.map
     "/":
-      name:"home"
-      component: require "./views/loaddata.vue"
+      name:"test"
+      component: require "./test/test.vue"
     "/load":
       name:"home"
       component: require "./views/loaddata.vue"
