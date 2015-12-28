@@ -1,10 +1,17 @@
 <template>
 
 <div>
-	<div v-for="o in attrs">
-		<span>{{o.key}}</span>
-		<span>{{o.value}}</span>
-	</div>
+	<table class="table">
+		<thead>
+			<tr><th>Attribute Name</th><th>Attribute Value</th></tr>
+		</thead>
+		<tbody>
+			<tr v-for="o in attrs">
+				<td>{{o.key}}</td>
+				<td>{{o.value}}</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
 
 </template>
@@ -30,6 +37,18 @@ module.exports=
 
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
+
+
+.table
+	margin 0px
+	thead
+		th
+			text-align center
+	tbody
+		td
+			text-align center
+			border-top 0px
+			padding 4px
 
 </style>

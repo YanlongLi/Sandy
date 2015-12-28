@@ -170,6 +170,21 @@ module.exports=
 
 </script>
 
+<style lang="stylus">
+
+.panel-heading
+	padding 0px 10px
+.panel-body
+	padding 10px
+
+.btn
+	padding 5px 10px
+	font-size 12px
+	line-height 1.2
+	border-radius 3px
+
+</style>
+
 <style lang="stylus" scoped>
 
 menubar_height = 50px

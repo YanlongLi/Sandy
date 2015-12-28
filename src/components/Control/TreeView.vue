@@ -4,20 +4,18 @@
 	<div class="group">
 		<span class="name">Tree Style</span>
 		<div class="input-group vals">
-			<input type="radio" v-model="curLayout" v-bind:value="'tree'" /> Tree
-			<input type="radio" v-model="curLayout" v-bind:value="'radial'" /> Radial Tree
-			<input type="radio" v-model="curLayout" v-bind:value="'cluster'" /> Cluster Tree
-			<input type="radio" v-model="curLayout" v-bind:value="'radial_cluster'" /> Radial Cluster Tree
+			<div><input type="radio" v-model="curLayout" v-bind:value="'tree'" /> Tree</div>
+			<div><input type="radio" v-model="curLayout" v-bind:value="'radial'" /> Radial Tree</div>
+			<div><input type="radio" v-model="curLayout" v-bind:value="'cluster'" /> Cluster Tree</div>
+			<div><input type="radio" v-model="curLayout" v-bind:value="'radial_cluster'" /> Radial Cluster Tree</div>
 		</div>
 		<div style="clear:both"></div>
 	</div>
 	<div class="group">
 		<span class="name">Radius</span>
 		<div class="input-group vals">
-			<label>min(px)</label>
-			<input type="number" v-model="radiusExtent[0]" min="1" max="20"/>
-			<label>max(px)</label>
-			<input type="number" v-model="radiusExtent[1]" min="5" max="20"/>
+			<div><label style="width:80px">min(px)</label><input type="number" v-model="radiusExtent[0]" min="1" max="20"/></div>
+			<div><label style="width:80px">max(px)</label><input type="number" v-model="radiusExtent[1]" min="5" max="20"/></div>
 		</div>
 		<div style="clear:both"></div>
 	</div>

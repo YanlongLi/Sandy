@@ -15,14 +15,15 @@
 <div class="group">
 	<span class="name">Group By</span>
 	<span class="vals">
-		<div v-for="attr in selLst" track-by="$index">
+		<div v-for="attr in selLst" track-by="$index" style="margin-top:6px">
 			<v-select :value.sync="selLst[$index]">
 				<v-option v-for="key in attrLst" :value="key"></v-option>
 			</v-select>
-			<span class="pull-right" @click="remove($index)"><i class="fa fa-minus"></i><span>
+			<span class="pull-right" @click="remove($index)"><i class="fa fa-minus"></i></span>
 		</div>
-	<span>
-			<span class="pull-right" @click="add"><i class="fa fa-plus"></i><span>
+		<span>
+				<span class="pull-right" @click="add"><i class="fa fa-plus"></i></span>
+		</span>
 	</span>
 	<div style="clear:both"></div>
 </div>
