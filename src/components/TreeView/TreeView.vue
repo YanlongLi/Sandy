@@ -177,7 +177,6 @@ module.exports=
 					that.update(d,layout,duration,transform,diagonal)
 			nodeEnter.on("mouseover",(d)-> that.$dispatch "event_select_node",d)
 				.on("click",click).append("circle").style("fill",(d)->
-					console.log controlStore.colorBy
 					if controlStore.colorBy.length
 						colorBy = controlStore.colorBy[0]
 						color(d[colorBy])
