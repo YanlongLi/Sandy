@@ -4,6 +4,12 @@ color = d3.scale.category20c()
 treeview =
 	radius: [2,20]
 
+treemap=
+		layout: "squarify"
+		paddings: [0,0,0,0]
+		round: false
+		sticky: false
+
 store =
 	size:
 		width: 800
@@ -25,5 +31,6 @@ store =
 	sizeBy: []
 	#
 	treeview: treeview
+	treemap: treemap
 
 module.exports = store

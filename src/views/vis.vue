@@ -59,6 +59,14 @@ controlStore = require "../utils/ControlStore.coffee"
 Tree = require("../utils/Tree.coffee").Tree
 prefix= require("../utils/Tree.coffee").prefix
 
+_evt_broadcast = (evt,fn)->
+	(args)->
+		if typeof fn is 'function'
+			fn args
+		if typeof @["on_"+evt] is 'function'
+			@["on_"+evt] args
+		@$broadcast evt,args
+
 module.exports=
 	components:
 		treeView: treeview
@@ -92,17 +100,6 @@ module.exports=
 			that.$broadcast "event_load_data",data
 		return
 	events:
-		event_control_change_size_by: (sizeBy)->
-			@$broadcast "event_control_change_size_by",sizeBy
-		event_control_change_color_by: (colorBy)->
-			@$broadcast "event_control_change_color_by",colorBy
-		event_control_change_sellst: (sels)->
-			if !@data or @data.type == 'json'
-				return
-			tree = new Tree @data.data
-			tree.treefy sels
-			tree.tranverse d3.sum,()->1
-			@$broadcast "event_control_change_root",tree.root
 		event_fix_position: (dx,dy)->
 			@fix.dx = dx
 			@fix.dy = dy
@@ -113,14 +110,26 @@ module.exports=
 			@trans.scale = 0.8
 			@trans.dx = 20
 			@trans.dy = 20
-		event_select_node: (node)->
-			@$broadcast "event_select_node",node
+		event_select_node: _evt_broadcast "event_select_node"
+		#
 		event_control_change_view: (viewName)->
 			@onChangeView(viewName)
-		event_tree_change_layout: (layout)->
-			@$broadcast "event_tree_change_layout",layout
-		event_tree_change_radius_scale: (scale)->
-			@$broadcast "event_tree_change_radius_scale",scale
+		event_control_change_size_by: _evt_broadcast "event_control_change_size_by"
+		event_control_change_color_by: _evt_broadcast "event_control_change_color_by"
+		event_control_change_sellst: (sels)->
+			if !@data or @data.type == 'json'
+				return
+			tree = new Tree @data.data
+			tree.treefy sels
+			tree.tranverse d3.sum,()->1
+			@$broadcast "event_control_change_root",tree.root
+		event_tree_change_layout: _evt_broadcast "event_tree_change_layout"
+		event_tree_change_radius_scale: _evt_broadcast "event_tree_change_radius_scale"
+		#
+		event_control_treemap_change_layout: _evt_broadcast "event_control_treemap_change_layout"
+		event_control_treemap_change_paddings: _evt_broadcast "event_control_treemap_change_paddings"
+		event_control_treemap_change_round: _evt_broadcast "event_control_treemap_change_round"
+		event_control_treemap_change_sticky: _evt_broadcast "event_control_treemap_change_sticky"
 	methods:
 		onChangeView: (viewName)->
 			@fix.dx = 0
