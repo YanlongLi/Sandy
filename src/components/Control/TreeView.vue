@@ -43,6 +43,8 @@ $ = require "jquery"
 select = require("vue-strap").select
 option = require("vue-strap").option
 
+control = require("../../utils/ControlStore.coffee").treeview
+
 module.exports=
 	components:
 		vSelect: select
@@ -50,7 +52,7 @@ module.exports=
 	data: () ->
 		curLayout: "tree"
 		scaleType: ["linear"]
-		radiusExtent: [0,10]
+		radiusExtent: control.radius
 	watch:
 		curLayout: (layout)->
 			@$dispatch "event_tree_change_layout",layout

@@ -1,13 +1,18 @@
 
-TreeNode = require "./TreeNode.coffee"
+TreeNode = require("./TreeNode.coffee").TreeNode
+prefix = require("./TreeNode.coffee").prefix
+keys = require("./TreeNode.coffee").keys
 
 class Tree
-	constructor: (@items) ->
-		@root = new TreeNode "root","root",@items
+	constructor: (items) ->
+		@[keys.items] = items
+		@root = new TreeNode "root","root",@[keys.items]
 
 	treefy: (lst) ->
-		delete @root.children if @root.children
-		@root.items = @items
+		children = keys.children
+		items = keys.items
+		delete @root[children] if @root[children]
+		@root[items] = @[items]
 		@_treefy [@root],lst
 		@root
 
@@ -17,8 +22,8 @@ class Tree
 		node.fillChildren attr for node in nodes
 		cls = []
 		for node in nodes
-			for child in node.children
-				child.parent =	node
+			for child in node[keys.children]
+				child[keys.parent] =	node
 				cls.push child
 		# cls = (child for child in node.children for node in nodes)
 		# cls =  _.union.apply null,cls
@@ -30,7 +35,10 @@ class Tree
 
 	_tranverse: (node, nodefn, leaffn) ->
 		leaffn = nodefn if !leaffn
-		resarr = if node.children then (@_tranverse child,nodefn,leaffn for child in node.children) else (leaffn.call item,item for item in node.items)
+		resarr = if node[keys.children] then (@_tranverse child,nodefn,leaffn for child in node[keys.children]) else (leaffn.call item,item for item in node[keys.items])
 		return nodefn.call node,resarr
 
-module.exports = Tree
+module.exports =
+	Tree:Tree
+	prefix:prefix
+	keys: keys

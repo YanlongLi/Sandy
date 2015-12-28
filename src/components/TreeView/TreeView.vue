@@ -1,11 +1,10 @@
 <template>
 <g>
 <g class="grid" v-el="grid"></g>
-	<g class="circle-group">
-		<!--<nodecomp v-for="node in nodes" :node="node" :radius="radius(node)" :style="style(node)"></nodecomp>-->
-	</g>
-	<g class="link-group">
-	</g>
+<g class="link-group">
+</g>
+<g class="circle-group">
+</g>
 </g>
 
 </template>
@@ -16,8 +15,10 @@
 
 $ = require "jquery"
 d3 = require "d3"
+keys = require("../../utils/Tree.coffee").keys
 
 controlStore = require "../../utils/ControlStore.coffee"
+color = controlStore.color
 
 module.exports=
 	data:()->
@@ -77,7 +78,18 @@ module.exports=
 	events:
 		event_control_change_root: (root)->
 			@root = root
+			@root.x0 = controlStore.size.height/2
+			@root.y0 = 0
 			@initEle()
+		event_control_change_color_by: (colorBy)->
+			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
+			node.select("circle").style("fill",(d)->
+				color(d[keys.val])
+			)
+		event_control_change_size_by: (sizeBy)->
+			scale = @scale
+			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
+			node.select("circle").attr("r",(d)-> scale(d[sizeBy]) or 4)
 		event_tree_change_layout: (layoutName)->
 			@layout = layoutName
 		event_tree_change_radius_scale: ([s1,s2])->
@@ -91,22 +103,10 @@ module.exports=
 			layout = @tree
 			radius = @diameter/2
 			transform = (d)->"translate("+d.y+","+d.x+")"
-			# transform = (d)->"translate("+d.y+","+d.x+")"
 			diagonal = @diagonal
-			nodes = layout.nodes root
-			links = layout.links nodes
-			scale = @scale
-			nodes.forEach (d)-> d.size = (if d.items then d.items.length else 1)
-			scale.domain(d3.extent(nodes,(d)->d.size)).range([3,10])
 			d3.select(@$el).select("g.circle-group").selectAll("g.node").remove()
 			d3.select(@$el).select("g.link-group").selectAll("path.link").remove()
-			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
-				.data(nodes,(d)->d.id || d.id=++i).enter().append("g").attr("class","node")
-				.attr("transform",transform)
-			node.insert("circle","g").style("stroke","#e41a1c").attr("r",(d)->scale(d.size) or 4)
-			link = d3.select(@$el).select("g.link-group").selectAll("path.link")
-				.data(links, (d)->d.target.id).enter().append("path").attr("class","link")
-				.attr("d",diagonal).style("fill","none").style("stroke","red")
+			@update(root,layout,@duration,transform,diagonal)
 		drawTree: ()->
 			root = @root
 			layout = @tree
@@ -141,45 +141,51 @@ module.exports=
 			diagonal = @radialDiagonal
 			@update(root,layout,duration,transform,diagonal)
 			return
-		update: (root,layout,duration,transform,diagonal)->
-			nodes = layout.nodes root
+		update: (nd,layout,duration,transform,diagonal)->
+			nodes = layout.nodes @root
 			links = layout.links nodes
-			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
-			node.data(nodes,(d)->d.id).transition(duration).attr("transform",transform)
-			link = d3.select(@$el).select("g.link-group").selectAll("path.link")
-			link.data(links,(d)->d.target.id).transition(duration).attr("d",diagonal)
-		temp: ()->
-			size = controlStore.getSize()
-			width = size.width
-			height = size.height
-			layout = d3.layout.tree().size([2*height,2*width])
-			diagonal = d3.svg.diagonal().projection((d)->[d.y, d.x])
-			@root.x0 = 0
-			@root.y0 = 0
-			nodes = layout.nodes(@root)
-			links = layout.links(nodes)
-			scale = d3.scale.linear().domain(d3.extent(nodes,(d)->d.size))
-				.range([3,10])
-			nodes.forEach (d)-> d.y = d.depth * 180
-			i = 0
-			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
-				.data(nodes,(d)->d.id || d.id=++i)
-			nodeEnter = node.enter().append("g").attr("class","node")
-				.attr("transform", (d)->"translate("+d.y+","+d.x+")")
-			nodeEnter.append("circle").attr("r",(d)->
-				return 4 if d.children
-				return scale(d.size)
-			)
-			nodeEnter.append("text").text((d)->d.name)
-				.attr("text-anchor",(d)->d.children?"end":"start")
-				.attr("dx", (d)->d.children?-10:10)
 			that = @
-			node.on "click",(d)->
-				that.$dispatch "event_select_node",d
-			link = d3.select(@$el).select("g.link-group").selectAll("g.link")
-				.data(links, (d)->d.target.id)
-			link.enter().insert("path","g").attr("class","link")
-				.attr("d",diagonal).style("fill","none")
+			range = controlStore.treeview.radius.map Number
+			domain = d3.extent(nodes,(d)->d.size=d.size or d.items.length or 0)
+			scale = @scale.range(range).domain(domain)
+			i = 0
+			node = d3.select(@$el).select("g.circle-group")
+				.selectAll("g.node").data(nodes,(d)->d.id or d.id = ++i)
+			nodeEnter = node.enter().append("g").attr("class","node")
+				.attr("transform",transform(nd))
+			click = (d)->
+				if d.children
+					d._children = d.children
+					delete d.children
+					that.update(d,layout,duration,transform,diagonal)
+				else if d._children
+					d.children = d._children
+					delete d._children
+					that.update(d,layout,duration,transform,diagonal)
+			nodeEnter.on("mouseover",(d)-> that.$dispatch "event_select_node",d)
+				.on("click",click).append("circle").style("fill",(d)->
+					if controlStore.colorBy.length
+						null
+					else
+						color(d[keys.val])
+			).attr("r",(d)->scale(d.size) or 4)
+			node.transition(duration).attr("transform",transform)
+			node.exit().transition(duration).attr("transform",transform(nd)).remove()
+
+			link = d3.select(@$el).select("g.link-group")
+				.selectAll("path.link").data(links,(d)->d.target.id)
+			link.enter().append("path").attr("class","link").attr("d",(d)->
+				o = {x:nd.x0,y:nd.y0}
+				diagonal({source:o,target:o})
+			).attr("stroke","#0D95DA").attr("fill","none").attr("stroke-width",2)
+			link.transition(duration).attr("d",diagonal)
+			link.exit().transition(duration).attr("d",(d)->
+				o = {x:nd.x0,y:nd.y0}
+				diagonal({source:o,target:o})
+			).remove()
+			nodes.forEach (d)->
+				d.x0 = d.x
+				d.y0 = d.y
 	compiled: ()->
 		size = controlStore.getSize()
 		width = size.width * 5
@@ -195,18 +201,15 @@ module.exports=
 
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
+
 
 .node
 	circle
-		fill red
+		fill #00A755
 		stroke #CCCCCC
 		stroke-width 1px
 
-path.link
-	fill none
-	stroke #CCCCCC
-	stroke-width 1px
 
 .grid
 	line

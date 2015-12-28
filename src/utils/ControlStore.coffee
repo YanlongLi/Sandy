@@ -1,6 +1,10 @@
 
+color = d3.scale.category20c()
 
-store = {
+treeview =
+	radius: [2,20]
+
+store =
 	size:
 		width: 800
 		height: 600
@@ -15,6 +19,11 @@ store = {
 		@size.width = size.width
 		@size.height = size.height
 	getSize: ()-> @size
-}
+	#
+	color: color
+	colorBy: []
+	sizeBy: []
+	#
+	treeview: treeview
 
 module.exports = store

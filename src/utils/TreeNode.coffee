@@ -1,19 +1,42 @@
 _ = require "underscore"
 
+UniqID = (length = 8)->
+	id = ""
+	id += Math.random().toString().substr(2) while id.length < length
+	id.substr 0,length
+
+prefix = "__77479588__"
+
+keys =
+	attr: prefix+"attr"
+	val: prefix+"val"
+	items: "items"
+	children: "children"
+	parent: prefix+"parent"
+
 class TreeNode
 
-	constructor: (@_attr, @_val, @items) ->
+	constructor: (attr, val, items) ->
+		@[keys.attr] = attr
+		@[keys.val] = val
+		@[keys.items] = items
 		return
 
 	fillChildren: (attr) ->
 		obj = {}
-		_.each @items, (item, idx)->
+		_.each @[keys.items], (item, idx)->
 			val = item[attr]
 			obj[val] = [] if !obj[val]
 			obj[val].push item
 			return
-		@children = (new TreeNode attr,val,items for val,items of obj)
+		@[keys.children] = (new TreeNode attr,val,items for val,items of obj)
 		# delete @items
 		return
 
-module.exports = TreeNode
+	attr: ()-> @[keys.attr]
+	val: ()-> @[keys.val]
+
+module.exports =
+	prefix: prefix
+	TreeNode:TreeNode
+	keys: keys

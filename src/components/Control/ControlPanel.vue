@@ -52,7 +52,7 @@
 
 <script lang="coffee">
 
-controlStore = require "../../utils/ControlStore.coffee"
+store = require "../../utils/ControlStore.coffee"
 select = require("vue-strap").select
 option = require("vue-strap").option
 
@@ -63,16 +63,14 @@ module.exports =
 		vSelect: select
 		vOption: option
 	data:()->
-		# attrLst: controlStore.attrLst
-		# selLst: controlStore.selLst
 		data: {}
 		attrLst: []
 		typeLst: []
 		selLst: []
 		curAttr: ""
 		curView: "tree"
-		colorBy: []
-		sizeBy: []
+		colorBy: store.colorBy
+		sizeBy: store.sizeBy
 	events:
 		event_load_data: (data)->
 			@data = data

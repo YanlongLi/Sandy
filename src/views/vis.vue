@@ -56,7 +56,8 @@ toolbar = require "../components/toolbar.vue"
 
 controlStore = require "../utils/ControlStore.coffee"
 
-Tree = require "../utils/Tree.coffee"
+Tree = require("../utils/Tree.coffee").Tree
+prefix= require("../utils/Tree.coffee").prefix
 
 module.exports=
 	components:
@@ -79,7 +80,7 @@ module.exports=
 		data: 0
 		root: {}
 	asyncData: (resove,reject)->
-		dataKey = "signal"
+		dataKey = "iris"
 		that = @
 		@$http.get "datasets/"+dataKey,(data)->
 			fn = d3.csv
@@ -91,6 +92,10 @@ module.exports=
 			that.$broadcast "event_load_data",data
 		return
 	events:
+		event_control_change_size_by: (sizeBy)->
+			@$broadcast "event_control_change_size_by",sizeBy
+		event_control_change_color_by: (colorBy)->
+			@$broadcast "event_control_change_color_by",colorBy
 		event_control_change_sellst: (sels)->
 			if !@data or @data.type == 'json'
 				return
