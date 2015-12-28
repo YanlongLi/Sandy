@@ -31,7 +31,7 @@ module.exports=
 			return [] if !@curNode?
 			node = @curNode
 			lst = ({key:at,value:node[at]} for at in choice).filter (d)->d.value?
-			if node.attr()
+			if typeof node.attr is 'function'
 				lst.push {key:node.attr(),value:node.val()}
 			lst
 
