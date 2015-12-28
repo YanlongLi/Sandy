@@ -10,6 +10,15 @@ treemap=
 		round: false
 		sticky: false
 
+icicle =
+	radial: true
+	labels: true
+
+indent =
+	width: 80
+	height: 20
+	indent: 20
+
 store =
 	size:
 		width: 800
@@ -32,5 +41,7 @@ store =
 	#
 	treeview: treeview
 	treemap: treemap
+	icicle: icicle
+	indent: indent
 
 module.exports = store
