@@ -88,16 +88,21 @@ module.exports=
 		data: 0
 		root: {}
 	asyncData: (resove,reject)->
-		dataKey = "iris"
+		dataKey = "flare"
 		that = @
 		@$http.get "datasets/"+dataKey,(data)->
-			fn = d3.csv
-			if data.type == "json"
-				fn = d3.json
-			fn data.path, (d)->
-				data.data = d
 			that.data = data
-			that.$broadcast "event_load_data",data
+			if data.type is "json"
+				d3.json data.path, (d)->
+					data.data = d
+					that.$broadcast "event_control_change_root",d
+					that.$broadcast "event_load_data",data
+			else if data.type is "csv"
+				d3.csv data.path, (d)->
+					data.data = d
+					that.$broadcast "event_load_data",data
+			else
+				return
 		return
 	events:
 		event_fix_position: (dx,dy)->

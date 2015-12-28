@@ -18,6 +18,7 @@ d3 = require "d3"
 keys = require("../../utils/Tree.coffee").keys
 
 controlStore = require "../../utils/ControlStore.coffee"
+control = controlStore.treeview
 color = controlStore.color
 
 module.exports=
@@ -84,7 +85,12 @@ module.exports=
 		event_control_change_color_by: (colorBy)->
 			node = d3.select(@$el).select("g.circle-group").selectAll("g.node")
 			node.select("circle").style("fill",(d)->
-				color(d[keys.val])
+				if d[colorBy]
+					domain = node.data().map (d)->d[colorBy]
+					color.domain domain
+					color(d[colorBy])
+				else
+					color(d[keys.val])
 			)
 		event_control_change_size_by: (sizeBy)->
 			scale = @scale
@@ -146,7 +152,14 @@ module.exports=
 			links = layout.links nodes
 			that = @
 			range = controlStore.treeview.radius.map Number
-			domain = d3.extent(nodes,(d)->d.size=d.size or d.items.length or 0)
+			domain = d3.extent(nodes,(d)->
+				if typeof d.size is 'number'
+					d.size
+				else if d.items and typeof d.items is 'array'
+					d.size=d.items.length
+				else
+					0
+			)
 			scale = @scale.range(range).domain(domain)
 			i = 0
 			node = d3.select(@$el).select("g.circle-group")
@@ -164,8 +177,10 @@ module.exports=
 					that.update(d,layout,duration,transform,diagonal)
 			nodeEnter.on("mouseover",(d)-> that.$dispatch "event_select_node",d)
 				.on("click",click).append("circle").style("fill",(d)->
+					console.log controlStore.colorBy
 					if controlStore.colorBy.length
-						null
+						colorBy = controlStore.colorBy[0]
+						color(d[colorBy])
 					else
 						color(d[keys.val])
 			).attr("r",(d)->scale(d.size) or 4)
@@ -178,6 +193,7 @@ module.exports=
 				o = {x:nd.x0,y:nd.y0}
 				diagonal({source:o,target:o})
 			).attr("stroke","#0D95DA").attr("fill","none").attr("stroke-width",2)
+			.attr("stroke-opacity",if control.labels then 0.8 else 0.2)
 			link.transition(duration).attr("d",diagonal)
 			link.exit().transition(duration).attr("d",(d)->
 				o = {x:nd.x0,y:nd.y0}

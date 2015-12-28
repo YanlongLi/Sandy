@@ -12,7 +12,7 @@
 	<div style="clear:both"></div>
 </div>
 
-<div class="group">
+<div class="group" v-if="data.type == 'csv'">
 	<span class="name">Group By</span>
 	<span class="vals">
 		<div v-for="attr in selLst" track-by="$index" style="margin-top:6px">
@@ -31,7 +31,7 @@
 <div class="group">
 	<span class="name">Size By</span>
 	<div class="vals">
-		<v-select :value.sync="sizeBy" :placeholder="'size by'">
+		<v-select :value.sync="control.sizeBy" :placeholder="'size by'">
 			<v-option v-for="attr in attrLst" :value="attr"></v-option>
 		</v-select>
 	</div>
@@ -40,7 +40,7 @@
 <div class="group">
 	<span class="name">Color By</span>
 	<div class="vals">
-		<v-select :value.sync="colorBy" :placeholder="'color by'">
+		<v-select :value.sync="control.colorBy" :placeholder="'color by'">
 			<v-option v-for="attr in attrLst" :value="attr"></v-option>
 		</v-select>
 	</div>
@@ -64,14 +64,13 @@ module.exports =
 		vSelect: select
 		vOption: option
 	data:()->
-		data: {}
+		data: {type:"json"}
 		attrLst: []
 		typeLst: []
 		selLst: []
 		curAttr: ""
 		curView: "tree"
-		colorBy: store.colorBy
-		sizeBy: store.sizeBy
+		control: store
 	events:
 		event_load_data: (data)->
 			@data = data
@@ -81,12 +80,13 @@ module.exports =
 		curView: (name)->
 			@$dispatch "event_control_change_view",name
 		selLst: (sels)->
+			return if @data.type is 'json'
 			res = _.uniq(sels.map (d)->d[0])
 			@$dispatch "event_control_change_sellst",res
-		sizeBy: (sels)->
+		"control.sizeBy": (sels)->
 			return if !sels.length
 			@$dispatch "event_control_change_size_by",sels[0]
-		colorBy: (sels)->
+		"control.colorBy": (sels)->
 			return if !sels.length
 			@$dispatch "event_control_change_color_by",sels[0]
 	methods:

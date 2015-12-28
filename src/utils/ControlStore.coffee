@@ -3,6 +3,7 @@ color = d3.scale.category20c()
 
 treeview =
 	radius: [2,20]
+	labels: false
 
 treemap=
 		layout: "squarify"
