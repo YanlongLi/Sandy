@@ -29,7 +29,7 @@ module.exports =
 		nodes: []
 		dragSet: false
 	asyncData: (resolve,reject)->
-		@$http.get "/data/flare.json", (root)->
+		@$http.get "/data/wifivis.json", (root)->
 			resolve root:root
 		return
 	watch:

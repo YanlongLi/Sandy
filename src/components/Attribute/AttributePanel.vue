@@ -18,7 +18,7 @@
 
 <script lang="coffee">
 
-choice = ["name","depth","x","y","size"]
+choice = ["name","depth","x","y","size","dir","path","uid","gid","atime","ctime","mtime"]
 
 module.exports=
 	data: ()->

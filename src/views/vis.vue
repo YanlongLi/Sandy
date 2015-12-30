@@ -88,7 +88,7 @@ module.exports=
 		data: 0
 		root: {}
 	asyncData: (resove,reject)->
-		dataKey = "flare"
+		dataKey = "wifivis"
 		that = @
 		@$http.get "datasets/"+dataKey,(data)->
 			that.data = data
